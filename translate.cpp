@@ -1,4 +1,4 @@
-﻿#include <iostream>
+#include <iostream>
 #include <fstream>
 #include <cstring>
 #include <conio.h>
@@ -6,18 +6,18 @@
 using namespace std;
 #define CHAR_MAP_SIZE 27
 
-struct trie_node 
+struct tree_node 
 {
 	int count;
 	string data = "";
-	struct trie_node* kinder[CHAR_MAP_SIZE];
+	struct tree_node* kinder[CHAR_MAP_SIZE];
 };
 
-typedef struct trie_node* trie_t;
+typedef struct tree_node* tree_t;
 
-trie_t trie_create(void) 
+tree_t tree_create(void) 
 {
-	trie_t node = new trie_node;
+	tree_t node = new tree_node;
 
 	if (node == NULL) 
 	{
@@ -33,13 +33,13 @@ trie_t trie_create(void)
 
 	return node;
 }
-void trie_free(trie_t tree) // FreeTree ***********
+void tree_free(tree_t tree) // FreeTree ***********
 { 
 	for (unsigned short int i = 0; i < CHAR_MAP_SIZE; i++) 
 	{
 		if (tree->kinder[i] != NULL) 
 		{
-			trie_free(tree->kinder[i]);
+			tree_free(tree->kinder[i]);
 		}
 	}
 	delete tree;
@@ -77,9 +77,9 @@ char char_map_index_to_char(int char_map_index)
 }
 
 
-string trie_get_first_word(trie_t root, string h = "")
+string tree_get_first_word(tree_t root, string h = "")
 {
-	trie_t tmp = root;
+	tree_t tmp = root;
 	if (tmp == NULL) 
 	{
 		return " ";
@@ -93,14 +93,14 @@ string trie_get_first_word(trie_t root, string h = "")
 			{
 				return h;
 			}
-			return trie_get_first_word(tmp->kinder[i], h);
+			return tree_get_first_word(tmp->kinder[i], h);
 		}
 	}
 	return h;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-string trie_get_next_word(int index_er, trie_t root, trie_t tmp, string current, string out = "", int count = 0)
+string tree_get_next_word(int index_er, tree_t root, tree_t tmp, string current, string out = "", int count = 0)
 {
 	int g;
 	if (count < current.length()) 
@@ -121,7 +121,7 @@ string trie_get_next_word(int index_er, trie_t root, trie_t tmp, string current,
 			{
 				return out;
 			}
-			return trie_get_next_word(index_er, root, tmp->kinder[g], current, out, count);
+			return tree_get_next_word(index_er, root, tmp->kinder[g], current, out, count);
 		}
 		g++;
 	}
@@ -131,20 +131,20 @@ string trie_get_next_word(int index_er, trie_t root, trie_t tmp, string current,
 	}
 	char m = current[current.length() - 1];
 	current.pop_back();
-	return trie_get_next_word(char_to_map_index(m), root, root, current);
+	return tree_get_next_word(char_to_map_index(m), root, root, current);
 
 }
 
-void add(trie_t root, string n, string data0) 
+void add(tree_t root, string n, string data0) 
 {
 	int l = n.length();
-	trie_t tmp = root;
+	tree_t tmp = root;
 	for (int i = 0; i < l; i++) 
 	{
 		int g = char_to_map_index(n[i]);
 		if (tmp->kinder[g] == NULL) 
 		{
-			tmp->kinder[g] = trie_create();
+			tmp->kinder[g] = tree_create();
 			tmp = tmp->kinder[g];
 		}
 		else 
@@ -157,9 +157,9 @@ void add(trie_t root, string n, string data0)
 
 }
 
-string find_words(trie_t root, string n) 
+string find_words(tree_t root, string n) 
 {
-	trie_t tmp = root;
+	tree_t tmp = root;
 	if (tmp == NULL) 
 	{
 		return " ";
@@ -189,7 +189,7 @@ string find_words(trie_t root, string n)
 
 }
 
-void draw(string* inp, trie_t root) 
+void draw(string* inp, tree_t root) 
 {
 	
 	system("cls");
@@ -199,7 +199,7 @@ void draw(string* inp, trie_t root)
 	cout << "----------------------------------------------------------------------------------------------------------------" << endl;
 	int i = 20;
 	string word = (*inp == "") ? "a" : *inp;
-	for (word = trie_get_next_word(-1, root, root, word); word != ""; word = trie_get_next_word(-1, root, root, word)) 
+	for (word = tree_get_next_word(-1, root, root, word); word != ""; word = tree_get_next_word(-1, root, root, word)) 
 	{
 		if (i == 0) { break; }
 		i--;
@@ -209,7 +209,7 @@ void draw(string* inp, trie_t root)
 		
 }
 
-void input(string* f, trie_t root) 
+void input(string* f, tree_t root) 
 {
 	char c;
 	string h = "";
@@ -243,8 +243,8 @@ int main()
 		cout << "eror" << endl;
 		exit(1);
 	}
-	trie_t root = NULL;
-	root = trie_create();
+	tree_t root = NULL;
+	root = tree_create();
 
 	cout << "LOAD...." << endl;
 	string x, y;
